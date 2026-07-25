@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A simple live weather forecast powered by Open-Meteo." />
+    <title>weather, plainly</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="site-header">
+        <p class="eyebrow">local forecast</p>
+        <h1>weather, plainly.</h1>
+        <form id="location-form" class="location-form" role="search">
+          <label for="location-input">search a location</label>
+          <div class="search-row">
+            <input id="location-input" name="location" type="search" placeholder="city or place" autocomplete="off" />
+            <button type="submit">update</button>
+          </div>
+        </form>
+        <p id="form-message" class="form-message" aria-live="polite"></p>
+      </header>
+
+      <section class="weather-card" aria-live="polite" aria-busy="true">
+        <p id="place" class="place">loading aarhus…</p>
+        <div class="current-weather">
+          <div>
+            <p id="temperature" class="temperature">—°</p>
+            <p id="condition" class="condition">getting the latest conditions</p>
+          </div>
+          <p id="today-range" class="today-range">high —° · low —°</p>
+        </div>
+        <dl class="details">
+          <div><dt>feels like</dt><dd id="feels-like">—°</dd></div>
+          <div><dt>wind</dt><dd id="wind">—</dd></div>
+          <div><dt>humidity</dt><dd id="humidity">—</dd></div>
+          <div><dt>updated</dt><dd id="updated">—</dd></div>
+        </dl>
+      </section>
+
+      <section class="forecast-section" aria-labelledby="forecast-heading">
+        <div class="section-heading">
+          <p class="eyebrow">ahead</p>
+          <h2 id="forecast-heading">seven day forecast</h2>
+        </div>
+        <div id="forecast" class="forecast-grid"></div>
+      </section>
+
+      <footer>weather data by <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">open-meteo</a></footer>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
