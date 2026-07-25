@@ -14,8 +14,8 @@ body { margin: 0; min-width: 320px; background: var(--paper); color: var(--ink);
 h1, h2, p { margin-top: 0; }
 h1 { max-width: 8ch; margin-bottom: 2.75rem; font-size: clamp(3.5rem, 11vw, 6.7rem); font-weight: 400; letter-spacing: -.065em; line-height: .86; }
 h2 { margin-bottom: 0; font-size: clamp(1.7rem, 5vw, 2.5rem); font-weight: 400; letter-spacing: -.045em; }
-.hero-image { height: clamp(150px, 27vw, 235px); margin: 0 0 2.4rem; overflow: hidden; border: 1px solid var(--line); background: #11110f; }
-.hero-image img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 52%; filter: grayscale(1) contrast(.88) brightness(.55); opacity: .72; }
+.hero-image { width: min(42%, 220px); height: 94px; margin: -1rem 0 2.4rem auto; overflow: hidden; border: 1px solid var(--line); background: #11110f; }
+.hero-image img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: center 52%; filter: grayscale(1) contrast(.88) brightness(.48); opacity: .58; }
 .location-form label { display: block; margin-bottom: .55rem; font: 700 .72rem/1 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .search-row { display: flex; max-width: 420px; border-bottom: 1px solid var(--ink); }
 input, button { border: 0; background: transparent; color: var(--ink); font: 1rem/1.2 Arial, sans-serif; }
@@ -43,4 +43,4 @@ dd { margin: 0; font: 1rem/1.2 Arial, sans-serif; }
 .day-temp { margin-bottom: 0; font: .9rem/1.1 Arial, sans-serif; }
 footer { margin-top: 4.5rem; color: var(--muted); font: .75rem/1.2 Arial, sans-serif; }
 a { color: inherit; }
-@media (max-width: 600px) { .page-shell { padding-top: 2.5rem; } .weather-card { margin: 2.5rem 0 3.5rem; } .details { grid-template-columns: repeat(2, 1fr); row-gap: 1.25rem; } .forecast-grid { grid-template-columns: repeat(2, 1fr); } .day { min-height: auto; border-bottom: 1px solid var(--line); } .day:nth-child(2n) { border-right: 0; } .day-icon, .day-name { margin-bottom: .7rem; } }
+@media (max-width: 600px) { .page-shell { padding-top: 2.5rem; } .hero-image { width: 150px; height: 74px; margin: -.35rem 0 1.75rem auto; } .weather-card { margin: 2.5rem 0 3.5rem; } .details { grid-template-columns: repeat(2, 1fr); row-gap: 1.25rem; } .forecast-grid { grid-template-columns: repeat(2, 1fr); } .day { min-height: auto; border-bottom: 1px solid var(--line); } .day:nth-child(2n) { border-right: 0; } .day-icon, .day-name { margin-bottom: .7rem; } }
