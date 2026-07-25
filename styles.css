@@ -22,6 +22,12 @@ input::placeholder { color: #958d80; }
 button { padding: .7rem 0 .7rem 1rem; cursor: pointer; font-weight: 700; text-transform: lowercase; }
 button:hover, a:hover { color: var(--sand); }
 .form-message { height: 1.2rem; margin: .55rem 0 0; color: var(--muted); font: .8rem/1.2 Arial, sans-serif; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; }
+.unit-switch, .saved-cities { display: flex; flex-wrap: wrap; gap: .4rem; }
+.unit-switch button, .saved-city { padding: .35rem .5rem; border: 1px solid var(--line); font: .7rem/1 Arial, sans-serif; }
+.unit-switch .is-active { border-color: var(--sand); color: var(--sand); }
+.saved-city { color: var(--muted); cursor: pointer; }
+.saved-city:hover { color: var(--ink); }
 .weather-card { margin: 3.5rem 0 5rem; padding: clamp(1.4rem, 4vw, 2.5rem); border: 1px solid var(--line); background: #11110f; }
 .place { margin-bottom: 2.25rem; color: var(--sand); font: 700 .76rem/1 Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
 .current-weather { display: flex; align-items: end; justify-content: space-between; gap: 2rem; padding-bottom: 2.4rem; border-bottom: 1px solid var(--ink); }
@@ -39,6 +45,22 @@ dd { margin: 0; font: 1rem/1.2 Arial, sans-serif; }
 .day-name { margin-bottom: 1.4rem; font: 700 .7rem/1 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .day-icon { margin-bottom: 1.2rem; font: 1.55rem/1 Arial, sans-serif; }
 .day-temp { margin-bottom: 0; font: .9rem/1.1 Arial, sans-serif; }
+.notice, .insight, .hourly-section { border-top: 1px solid var(--line); padding-top: 1.2rem; margin-top: 3.5rem; }
+.notice { border-color: var(--sand); color: var(--sand); }
+.notice p:last-child { margin-bottom: 0; font: 1rem/1.4 Arial, sans-serif; }
+.insight-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 3.5rem; background: var(--line); }
+.insight { margin: 0; padding: 1.2rem; background: var(--paper); }
+.insight-copy { margin-bottom: 0; font: 1.1rem/1.35 Arial, sans-serif; }
+.chart-key { display: flex; gap: 1rem; margin: -.5rem 0 1rem; color: var(--muted); font: .7rem/1 Arial, sans-serif; text-transform: uppercase; letter-spacing: .08em; }
+.chart-key span::before { display: inline-block; width: .55rem; height: .55rem; margin-right: .35rem; content: ''; background: var(--sand); }
+.chart-key span:last-child::before { background: var(--muted); }
+.hourly-chart { width: 100%; height: auto; overflow: visible; border-bottom: 1px solid var(--line); }
+.chart-line { fill: none; stroke: var(--sand); stroke-width: 3; vector-effect: non-scaling-stroke; }
+.chart-bar { fill: var(--muted); opacity: .7; }
+.chart-label { fill: var(--muted); font: 12px Arial, sans-serif; }
+.hourly-list { display: grid; grid-template-columns: repeat(6, 1fr); }
+.hour { padding: .8rem .4rem; border-right: 1px solid var(--line); font: .78rem/1.35 Arial, sans-serif; }
+.hour:first-child { padding-left: 0; }.hour:last-child { border: 0; }
 footer { margin-top: 4.5rem; color: var(--muted); font: .75rem/1.2 Arial, sans-serif; }
 a { color: inherit; }
-@media (max-width: 600px) { .page-shell { padding-top: 2.5rem; } .weather-card { margin: 2.5rem 0 3.5rem; } .details { grid-template-columns: repeat(2, 1fr); row-gap: 1.25rem; } .forecast-grid { grid-template-columns: repeat(2, 1fr); } .day { min-height: auto; border-bottom: 1px solid var(--line); } .day:nth-child(2n) { border-right: 0; } .day-icon, .day-name { margin-bottom: .7rem; } }
+@media (max-width: 600px) { .page-shell { padding-top: 2.5rem; } .toolbar { align-items: flex-start; flex-direction: column; } .weather-card { margin: 2.5rem 0 3.5rem; } .details { grid-template-columns: repeat(2, 1fr); row-gap: 1.25rem; } .forecast-grid { grid-template-columns: repeat(2, 1fr); } .day { min-height: auto; border-bottom: 1px solid var(--line); } .day:nth-child(2n) { border-right: 0; } .day-icon, .day-name { margin-bottom: .7rem; } .insight-grid { grid-template-columns: 1fr; } .hourly-list { overflow-x: auto; grid-template-columns: repeat(12, minmax(60px, 1fr)); } }

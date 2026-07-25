@@ -20,6 +20,10 @@
           </div>
         </form>
         <p id="form-message" class="form-message" aria-live="polite"></p>
+        <div class="toolbar">
+          <div class="unit-switch" aria-label="temperature unit"><button type="button" data-unit="celsius" class="is-active">°c</button><button type="button" data-unit="fahrenheit">°f</button></div>
+          <div id="saved-cities" class="saved-cities" aria-label="saved cities"></div>
+        </div>
       </header>
 
       <section class="weather-card" aria-live="polite" aria-busy="true">
@@ -37,6 +41,20 @@
           <div><dt>humidity</dt><dd id="humidity">—</dd></div>
           <div><dt>updated</dt><dd id="updated">—</dd></div>
         </dl>
+      </section>
+
+      <section id="alert-panel" class="notice" hidden aria-live="polite"><p class="eyebrow">weather notice</p><p id="alert-text"></p></section>
+
+      <section class="insight-grid" aria-label="today at a glance">
+        <article class="insight"><p class="eyebrow">best time today</p><p id="best-time" class="insight-copy">—</p></article>
+        <article class="insight"><p class="eyebrow">next hour</p><p id="next-rain" class="insight-copy">—</p></article>
+      </section>
+
+      <section class="hourly-section" aria-labelledby="hourly-heading">
+        <div class="section-heading"><p class="eyebrow">next 12 hours</p><h2 id="hourly-heading">temperature & rain</h2></div>
+        <div class="chart-key"><span>temperature</span><span>precipitation</span></div>
+        <svg id="hourly-chart" class="hourly-chart" viewBox="0 0 720 210" role="img" aria-label="hourly temperature and precipitation chart"></svg>
+        <div id="hourly-list" class="hourly-list"></div>
       </section>
 
       <section class="forecast-section" aria-labelledby="forecast-heading">

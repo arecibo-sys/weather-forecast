@@ -1,60 +1,13 @@
-const weatherCodes = {
-  0: ['clear sky', '☀'], 1: ['mainly clear', '☀'], 2: ['partly cloudy', '◐'], 3: ['overcast', '☁'],
-  45: ['foggy', '≋'], 48: ['rime fog', '≋'], 51: ['light drizzle', '⌇'], 53: ['drizzle', '⌇'],
-  55: ['heavy drizzle', '⌇'], 56: ['freezing drizzle', '⌇'], 57: ['heavy freezing drizzle', '⌇'],
-  61: ['light rain', '☂'], 63: ['rain', '☂'], 65: ['heavy rain', '☂'], 66: ['freezing rain', '☂'],
-  67: ['heavy freezing rain', '☂'], 71: ['light snow', '✳'], 73: ['snow', '✳'], 75: ['heavy snow', '✳'],
-  77: ['snow grains', '✳'], 80: ['rain showers', '☂'], 81: ['rain showers', '☂'], 82: ['heavy rain showers', '☂'],
-  85: ['snow showers', '✳'], 86: ['heavy snow showers', '✳'], 95: ['thunderstorm', 'ϟ'],
-  96: ['thunderstorm with hail', 'ϟ'], 99: ['thunderstorm with hail', 'ϟ']
-};
-
-const $ = (id) => document.getElementById(id);
-const formatTemp = (value) => `${Math.round(value)}°`;
-const weatherLabel = (code) => weatherCodes[code] || ['unknown conditions', '—'];
-
-async function getCoordinates(query) {
-  const url = new URL('https://geocoding-api.open-meteo.com/v1/search');
-  url.search = new URLSearchParams({ name: query, count: 1, language: 'en', format: 'json' });
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('location search failed');
-  const data = await response.json();
-  if (!data.results?.length) throw new Error('location not found');
-  return data.results[0];
-}
-
-async function getForecast(latitude, longitude) {
-  const url = new URL('https://api.open-meteo.com/v1/forecast');
-  url.search = new URLSearchParams({ latitude, longitude, current: 'temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m', daily: 'weather_code,temperature_2m_max,temperature_2m_min', timezone: 'auto', forecast_days: 7 });
-  const response = await fetch(url);
-  if (!response.ok) throw new Error('weather request failed');
-  return response.json();
-}
-
-function render(place, data) {
-  const { current, daily } = data;
-  $('place').textContent = [place.name, place.admin1 || place.country].filter(Boolean).join(', ');
-  $('temperature').textContent = formatTemp(current.temperature_2m);
-  $('condition').textContent = weatherLabel(current.weather_code)[0];
-  $('today-range').textContent = `high ${formatTemp(daily.temperature_2m_max[0])} · low ${formatTemp(daily.temperature_2m_min[0])}`;
-  $('feels-like').textContent = formatTemp(current.apparent_temperature);
-  $('wind').textContent = `${Math.round(current.wind_speed_10m)} km/h`;
-  $('humidity').textContent = `${current.relative_humidity_2m}%`;
-  $('updated').textContent = new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' }).format(new Date());
-  $('forecast').innerHTML = daily.time.map((date, index) => {
-    const [label, icon] = weatherLabel(daily.weather_code[index]);
-    const day = new Intl.DateTimeFormat('en', { weekday: 'short' }).format(new Date(`${date}T12:00:00`));
-    return `<article class="day"><p class="day-name">${index === 0 ? 'today' : day}</p><p class="day-icon" aria-label="${label}" title="${label}">${icon}</p><p class="day-temp">${formatTemp(daily.temperature_2m_max[index])} / ${formatTemp(daily.temperature_2m_min[index])}</p></article>`;
-  }).join('');
-  document.querySelector('.weather-card').setAttribute('aria-busy', 'false');
-}
-
-async function loadLocation(query) {
-  $('form-message').textContent = 'updating forecast…';
-  document.querySelector('.weather-card').setAttribute('aria-busy', 'true');
-  try { const place = await getCoordinates(query); render(place, await getForecast(place.latitude, place.longitude)); $('form-message').textContent = ''; }
-  catch (error) { $('form-message').textContent = error.message === 'location not found' ? 'location not found. try another search.' : 'unable to refresh the forecast.'; document.querySelector('.weather-card').setAttribute('aria-busy', 'false'); }
-}
-
-$('location-form').addEventListener('submit', (event) => { event.preventDefault(); const query = $('location-input').value.trim(); if (query) loadLocation(query); });
-loadLocation('Aarhus, Denmark');
+const codes={0:['clear sky','☀'],1:['mainly clear','☀'],2:['partly cloudy','◐'],3:['overcast','☁'],45:['foggy','≋'],48:['rime fog','≋'],51:['light drizzle','⌇'],53:['drizzle','⌇'],55:['heavy drizzle','⌇'],61:['light rain','☂'],63:['rain','☂'],65:['heavy rain','☂'],71:['light snow','✳'],73:['snow','✳'],75:['heavy snow','✳'],80:['rain showers','☂'],81:['rain showers','☂'],82:['heavy rain showers','☂'],95:['thunderstorm','ϟ'],96:['thunderstorm with hail','ϟ'],99:['thunderstorm with hail','ϟ']};
+const $=id=>document.getElementById(id); let unit=localStorage.getItem('weather-unit')||'celsius'; let saved=JSON.parse(localStorage.getItem('weather-cities')||'[]');
+const label=c=>codes[c]||['unknown conditions','—']; const temp=v=>`${Math.round(v)}°`; const u=()=>unit==='fahrenheit'?'°f':'°c';
+async function coords(q){const x=new URL('https://geocoding-api.open-meteo.com/v1/search');x.search=new URLSearchParams({name:q,count:1,language:'en',format:'json'});const r=await fetch(x);const d=await r.json();if(!d.results?.[0])throw Error('location not found');return d.results[0]}
+async function forecast(lat,lon){const x=new URL('https://api.open-meteo.com/v1/forecast');x.search=new URLSearchParams({latitude:lat,longitude:lon,current:'temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m',hourly:'temperature_2m,precipitation,weather_code',daily:'weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum',timezone:'auto',forecast_days:7,temperature_unit:unit});const r=await fetch(x);if(!r.ok)throw Error('weather request failed');return r.json()}
+function save(p){const city={name:p.name,admin:p.admin1||p.country,latitude:p.latitude,longitude:p.longitude};saved=[city,...saved.filter(x=>x.name!==city.name)].slice(0,5);localStorage.setItem('weather-cities',JSON.stringify(saved));renderSaved()}
+function renderSaved(){ $('saved-cities').innerHTML=saved.map((c,i)=>`<button class="saved-city" data-city="${i}" type="button">${c.name}</button>`).join(''); document.querySelectorAll('[data-city]').forEach(b=>b.onclick=()=>load(saved[b.dataset.city]));}
+function hours(d){const i=d.hourly.time.findIndex(t=>t>=d.current.time);return d.hourly.time.slice(i,i+12).map((time,n)=>({time,temp:d.hourly.temperature_2m[i+n],rain:d.hourly.precipitation[i+n],code:d.hourly.weather_code[i+n]}));}
+function chart(items){const temps=items.map(x=>x.temp),max=Math.max(...temps),min=Math.min(...temps),range=max-min||1;const pts=items.map((x,i)=>`${25+i*61},${142-(x.temp-min)/range*88}`).join(' ');const bars=items.map((x,i)=>`<rect class="chart-bar" x="${17+i*61}" y="${175-Math.min(x.rain*16,55)}" width="16" height="${Math.min(x.rain*16,55)}"/>`).join('');const labels=items.filter((_,i)=>i%2===0).map((x,i)=>`<text class="chart-label" x="${25+i*122}" y="202" text-anchor="middle">${new Intl.DateTimeFormat('en',{hour:'numeric'}).format(new Date(x.time))}</text>`).join('');$('hourly-chart').innerHTML=`${bars}<polyline class="chart-line" points="${pts}"/>${labels}`; $('hourly-list').innerHTML=items.slice(0,6).map(x=>`<div class="hour"><strong>${new Intl.DateTimeFormat('en',{hour:'numeric'}).format(new Date(x.time))}</strong><br>${temp(x.temp)} ${label(x.code)[1]}<br>${x.rain?`${x.rain.toFixed(1)} mm`:''}</div>`).join('')}
+function insights(items,d){const best=items.reduce((a,x)=>x.rain<a.rain||(x.rain===a.rain&&x.code<=1)?x:a,items[0]);$('best-time').textContent=`${new Intl.DateTimeFormat('en',{hour:'numeric'}).format(new Date(best.time))} · ${label(best.code)[0]}, ${temp(best.temp)}`;const next=items.find(x=>x.rain>0);$('next-rain').textContent=next?`${next.rain.toFixed(1)} mm around ${new Intl.DateTimeFormat('en',{hour:'numeric'}).format(new Date(next.time))}`:'no precipitation expected in the next 12 hours';const maxRain=Math.max(...items.map(x=>x.rain)),wind=d.current.wind_speed_10m,storm=items.some(x=>x.code>=95);const text=storm?'thunderstorms are forecast nearby. take care outdoors.':wind>=55?`strong winds near ${Math.round(wind)} km/h are forecast.`:maxRain>=5?`heavy precipitation may reach ${maxRain.toFixed(1)} mm per hour.`:'';$('alert-panel').hidden=!text;$('alert-text').textContent=text||''}
+function render(p,d){const c=d.current,day=d.daily;$('place').textContent=[p.name,p.admin||p.country].filter(Boolean).join(', ');$('temperature').textContent=temp(c.temperature_2m);$('condition').textContent=label(c.weather_code)[0];$('today-range').textContent=`high ${temp(day.temperature_2m_max[0])} · low ${temp(day.temperature_2m_min[0])}`;$('feels-like').textContent=temp(c.apparent_temperature);$('wind').textContent=`${Math.round(c.wind_speed_10m)} km/h`;$('humidity').textContent=`${c.relative_humidity_2m}%`;$('updated').textContent=new Intl.DateTimeFormat('en',{hour:'numeric',minute:'2-digit'}).format(new Date());$('forecast').innerHTML=day.time.map((date,i)=>`<article class="day"><p class="day-name">${i?'': 'today'}${i?new Intl.DateTimeFormat('en',{weekday:'short'}).format(new Date(`${date}T12:00:00`)):''}</p><p class="day-icon">${label(day.weather_code[i])[1]}</p><p class="day-temp">${temp(day.temperature_2m_max[i])} / ${temp(day.temperature_2m_min[i])}</p></article>`).join('');const h=hours(d);chart(h);insights(h,d);document.querySelector('.weather-card').setAttribute('aria-busy','false')}
+async function load(p){$('form-message').textContent='updating forecast…';try{const d=await forecast(p.latitude,p.longitude);render(p,d);save(p);$('form-message').textContent=''}catch(e){$('form-message').textContent='unable to refresh the forecast.'}}
+$('location-form').addEventListener('submit',async e=>{e.preventDefault();const q=$('location-input').value.trim();if(q)try{await load(await coords(q))}catch(e){$('form-message').textContent='location not found. try another search.'}});document.querySelectorAll('[data-unit]').forEach(b=>b.onclick=()=>{unit=b.dataset.unit;localStorage.setItem('weather-unit',unit);document.querySelectorAll('[data-unit]').forEach(x=>x.classList.toggle('is-active',x===b));load(saved[0]||{name:'Aarhus',country:'Denmark',latitude:56.1567,longitude:10.2108})});renderSaved();load({name:'Aarhus',country:'Denmark',latitude:56.1567,longitude:10.2108});
